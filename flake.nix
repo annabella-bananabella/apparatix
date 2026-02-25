@@ -8,13 +8,9 @@
   };
 
   outputs =
-    inputs@{
-      flake-parts,
-      nixpkgs,
-      ...
-    }:
+    inputs:
 
-    flake-parts.lib.mkFlake { inherit inputs; } (
+    inputs.flake-parts.lib.mkFlake { inherit inputs; } (
       top@{
         config,
         withSystem,
@@ -24,7 +20,9 @@
       let
 
         listNixFilesInDir =
-          directory: with nixpkgs.lib.fileset; fileFilter (file: file.hasExt "nix") directory |> toList;
+          directory:
+          with inputs.nixpkgs.lib.fileset;
+          fileFilter (file: file.hasExt "nix") directory |> toList;
 
       in
       {
