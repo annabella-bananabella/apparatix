@@ -19,18 +19,30 @@
       }:
       let
 
-        listNixFilesInDir =
-          directory:
-          with inputs.nixpkgs.lib.fileset;
-          fileFilter (file: file.hasExt "nix") directory |> toList;
+        recListNixFiles = with inputs.nixpkgs.lib; rec {
+
+          singleDir =
+            directory:
+            with fileset;
+
+            fileFilter (file: file.hasExt "nix") directory |> toList;
+
+          multipleDirs =
+            directories:
+
+            map singleDir directories |> flatten;
+
+        };
 
       in
       {
 
         systems = [ "x86_64-linux" ];
 
-        imports = listNixFilesInDir ./modules;
-
+        imports = recListNixFiles.multipleDirs [
+          ./config
+          ./options
+        ];
       }
     );
 }
