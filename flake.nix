@@ -6,6 +6,11 @@
 
     flake-parts.url = "github:hercules-ci/flake-parts";
 
+    list-nix-files = {
+      url = "github:apparatix/list-nix-files";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
   };
 
   outputs =
@@ -18,29 +23,11 @@
         moduleWithSystem,
         ...
       }:
-      let
-
-        recListNixFiles = with inputs.nixpkgs.lib; rec {
-
-          singleDir =
-            directory:
-            with fileset;
-
-            fileFilter (file: file.hasExt "nix") directory |> toList;
-
-          multipleDirs =
-            directories:
-
-            map singleDir directories |> flatten;
-
-        };
-
-      in
       {
 
         systems = [ "x86_64-linux" ];
 
-        imports = recListNixFiles.multipleDirs [
+        imports = inputs.list-nix-files.multipleDirs [
           ./config
           ./options
         ];
