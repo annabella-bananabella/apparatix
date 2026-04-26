@@ -1,4 +1,4 @@
-{ inputs, ... }:
+{ ... }:
 {
 
   flake.nixosModules.nixpkgs.i18n = {
